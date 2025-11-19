@@ -54,7 +54,10 @@ function App() {
   const [hand, setHand] = useState<Deck>([])
 	const [life, setLife] = useState(20)
 	const [weapon, setWeapon] = useState<Weapon>()
-  
+  const [skipped, setSkipped] = useState(false)
+  const [healed, setHealed] = useState(false)
+  const [opponent, setOpponent] = useState<Card>()
+
   const drawCards = (count: number) => {
     const drawn = deck.slice(0, count);
     setHand((prevHand => [...prevHand, ...drawn]))
@@ -66,37 +69,86 @@ function App() {
     setHand([])
   }
 
+  const handleSkip = () => {
+    setSkipped(true)
+    putBack()
+    drawCards(4)
+    setHealed(false)
+  }
+
 	const handleCard = (card: Card) => {
 		if(card.suit === 'clubs' || card.suit === 'spades') {
-			let damage = 0
-			switch(card.rank) {
-				  case 'J':
-						damage = 11
-						break
-          case 'Q':
-						damage = 12
-						break
-          case 'K':
-						damage = 13
-						break
-          case 'A':
-						damage = 14
-						break
-					default:
-						damage = Number(card.rank)
-						break;
-			}
-			setLife(life - damage)
-			removeCardHand(card)
+      setOpponent(card)
 		} else if(card.suit === 'hearts') {
-			const heal = Number(card.rank)
+      const heal = healed ? 0 : Number(card.rank)
 			setLife(Math.min(life + heal, 20))
 			removeCardHand(card)
+      setHealed(true)
 		} else if(card.suit === 'diamonds') {
 			setWeapon({strength: Number(card.rank), last: 0})
 			removeCardHand(card)
 		}
+
+    if(hand.length === 1) {
+      drawCards(3)
+      setSkipped(false)
+    }
 	}
+
+  const fight = (card: Card, weapon: Weapon) => {
+		let damage = getPower(card)
+
+    if (weapon.last > -1) {
+      setWeapon({...weapon, last: damage})
+      damage = Math.max(damage - weapon.strength, 0)
+    }
+
+    setLife(life - damage)
+		removeCardHand(card)
+    setOpponent(undefined)
+
+    if(hand.length === 2) {
+      drawCards(3)
+      setSkipped(false)
+    }
+  }
+
+  const getPower = (card: Card) => {
+    let damage = 0
+    switch(card.rank) {
+		  case 'J':
+			  damage = 11
+			  break
+      case 'Q':
+			  damage = 12
+			  break
+      case 'K':
+			  damage = 13
+			  break
+      case 'A':
+			  damage = 14
+				break
+			default:
+				damage = Number(card.rank)
+				break;
+		}
+    return damage
+  }
+
+  const getNeatEnemy = (str: number) => {
+    switch(str) {
+      case 11:
+        return 'J'
+      case 12:
+        return 'Q'
+      case 13:
+        return 'K'
+      case 14:
+        return 'A'
+      default:
+        return str
+    }
+  }
 
 	const removeCardHand = (cardToRemove: Card) => {
 		setHand(prev =>
@@ -105,6 +157,15 @@ function App() {
 			)
 		)
 	}
+
+  const isDisabled = (opp: Card) => {
+    if(!weapon)
+      return true
+    else if (weapon.last < getPower(opp) && weapon.last !== 0)
+      return true
+
+    return false
+  }
 
   return (
     <>
@@ -144,8 +205,23 @@ function App() {
 			<div>Current weapon: {weapon ? (
 				<>
 					{weapon.strength}
+          <div>Last enemy: {getNeatEnemy(weapon.last)}</div>
 				</>) : "none"}
 			</div>
+      <button onClick={() => handleSkip()} disabled={skipped}>
+        Skip
+      </button>
+      {opponent && 
+      <div>
+        How do you want to fight?
+        <button onClick={() => fight(opponent, {strength: 0, last: -1})}>
+          Barehanded
+        </button>
+        <button onClick={() => fight(opponent, weapon!)} disabled={isDisabled(opponent)}>
+          Weapon
+        </button>
+      </div>
+      }
     </>
   )
 }
