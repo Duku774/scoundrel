@@ -57,6 +57,20 @@ function App() {
   const [skipped, setSkipped] = useState(false)
   const [healed, setHealed] = useState(false)
   const [opponent, setOpponent] = useState<Card>()
+  const [gameOver, setGameOver] = useState(false)
+  const [score, setScore] = useState(-208)
+
+  const handleRestart = () => {  
+    setDeck(shuffle(createDeck()))
+    setHand([])
+    setLife(20)
+    setWeapon(undefined)
+    setSkipped(false)
+    setHealed(false)
+    setOpponent(undefined)
+    setGameOver(false)
+    setScore(-208)
+  }
 
   const drawCards = (count: number) => {
     const drawn = deck.slice(0, count);
@@ -83,20 +97,33 @@ function App() {
       const heal = healed ? 0 : Number(card.rank)
 			setLife(Math.min(life + heal, 20))
 			removeCardHand(card)
+      setSkipped(true)
       setHealed(true)
+      if(hand.length === 2) {
+        drawCards(3)
+        setSkipped(false)
+        setHealed(false)
+      } else if (hand.length === 1 && !deck) {
+        setGameOver(true)
+      }
 		} else if(card.suit === 'diamonds') {
 			setWeapon({strength: Number(card.rank), last: 0})
 			removeCardHand(card)
+      setSkipped(true)
+      if(hand.length === 2) {
+        drawCards(3)
+        setSkipped(false)
+        setHealed(false)
+      }  else if (hand.length === 1 && !deck) {
+        setGameOver(true)
+      }
 		}
-
-    if(hand.length === 1) {
-      drawCards(3)
-      setSkipped(false)
-    }
 	}
 
   const fight = (card: Card, weapon: Weapon) => {
 		let damage = getPower(card)
+
+    setScore(score + damage)
 
     if (weapon.last > -1) {
       setWeapon({...weapon, last: damage})
@@ -107,9 +134,18 @@ function App() {
 		removeCardHand(card)
     setOpponent(undefined)
 
+    if(life - damage <= 0) {
+      setGameOver(true)
+    }
+
+    setSkipped(true)
+
     if(hand.length === 2) {
       drawCards(3)
       setSkipped(false)
+      setHealed(false)
+    }  else if (hand.length === 1 && !deck) {
+      setGameOver(true)
     }
   }
 
@@ -169,26 +205,11 @@ function App() {
 
   return (
     <>
-      <button onClick={() => {setDeck(createDeck())}}>
-        Test deck creation
-      </button>
-      <button onClick={() => setDeck(shuffle(deck))}>
-        Shuffle
-      </button>
-      {deck && (
-        <ul>
-          {deck.map((card) => (
-            <li>
-              {card.rank} of {card.suit}
-            </li>
-          ))}
-        </ul>
-      )}
+      <div>
+        Remaining Cards: {deck.length}
+      </div>
       <button onClick={() => drawCards(4)}>
         Draw 4
-      </button>
-      <button onClick={() => putBack()}>
-        Put back
       </button>
       {hand && (
         <ul>
@@ -220,8 +241,20 @@ function App() {
         <button onClick={() => fight(opponent, weapon!)} disabled={isDisabled(opponent)}>
           Weapon
         </button>
+        <button onClick={() => setOpponent(undefined)}>
+          Cancel
+        </button>
       </div>
       }
+      {gameOver && (
+        <div>
+          Game Over:
+          Your final score is: {score}
+          <button onClick={handleRestart}>
+            Try again?
+          </button>
+        </div>
+      )}
     </>
   )
 }
