@@ -5,38 +5,45 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
 .card {
-  padding: 2em;
+  background-color: white;
+  color: black;
+  width: 70px;
+  height: 100px;
+  border-radius: 6px;
 }
 
-.read-the-docs {
-  color: #888;
+ul {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 1rem;
+  margin: 0;
+}
+
+.handWeapon {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.weapon {
+  background-color: white;
+  color: darkred;
+  width: 70px;
+  height: 100px;
+  border-radius: 6px;
+}
+
+.lastEnemy {
+  background-color: white;
+  color: black;
+  width: 70px;
+  height: 100px;
+  border-radius: 6px;
+}
+
+.decision {
+  display: flex;
+  flex-direction: column;
 }

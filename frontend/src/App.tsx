@@ -105,6 +105,7 @@ function App() {
         setHealed(false)
       } else if (hand.length === 1 && !deck) {
         setGameOver(true)
+        setScore(score + (life + heal - 20))
       }
 		} else if(card.suit === 'diamonds') {
 			setWeapon({strength: Number(card.rank), last: 0})
@@ -197,7 +198,7 @@ function App() {
   const isDisabled = (opp: Card) => {
     if(!weapon)
       return true
-    else if (weapon.last < getPower(opp) && weapon.last !== 0)
+    else if (weapon.last <= getPower(opp) && weapon.last !== 0)
       return true
 
     return false
@@ -215,7 +216,7 @@ function App() {
         <ul>
           {hand.map((card: Card) => (
             <li>
-              <div onClick={() => (handleCard(card))}>
+              <div onClick={() => (handleCard(card))} className='card'>
 								{card.rank} of {card.suit}
 								</div>
             </li>
@@ -224,26 +225,32 @@ function App() {
       )}
 			<div>Current life: {life}</div>
 			<div>Current weapon: {weapon ? (
-				<>
-					{weapon.strength}
-          <div>Last enemy: {getNeatEnemy(weapon.last)}</div>
-				</>) : "none"}
+				<div className='handWeapon'>
+					<div className='weapon'>
+            {weapon.strength}
+          </div>
+          <div className='lastEnemy'>
+            {getNeatEnemy(weapon.last)}
+          </div>
+				</div>) : "none"}
 			</div>
       <button onClick={() => handleSkip()} disabled={skipped}>
         Skip
       </button>
       {opponent && 
-      <div>
-        How do you want to fight?
-        <button onClick={() => fight(opponent, {strength: 0, last: -1})}>
-          Barehanded
-        </button>
-        <button onClick={() => fight(opponent, weapon!)} disabled={isDisabled(opponent)}>
-          Weapon
-        </button>
-        <button onClick={() => setOpponent(undefined)}>
-          Cancel
-        </button>
+      <div className='decision'>
+        <div className='question'>How do you want to fight?</div>
+        <div>
+          <button onClick={() => fight(opponent, {strength: 0, last: -1})}>
+            Barehanded
+          </button>
+          <button onClick={() => fight(opponent, weapon!)} disabled={isDisabled(opponent)}>
+            Weapon
+          </button>
+          <button onClick={() => setOpponent(undefined)}>
+            Cancel
+          </button>
+        </div>
       </div>
       }
       {gameOver && (
