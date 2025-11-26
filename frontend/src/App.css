@@ -11,6 +11,15 @@
   width: 70px;
   height: 100px;
   border-radius: 6px;
+  font-size: 1.5rem;
+}
+
+.card.black {
+  color: black;
+}
+
+.card.red {
+  color: red;
 }
 
 ul {
@@ -27,23 +36,26 @@ ul {
   justify-content: center;
 }
 
-.weapon {
-  background-color: white;
-  color: darkred;
-  width: 70px;
-  height: 100px;
-  border-radius: 6px;
-}
-
-.lastEnemy {
-  background-color: white;
-  color: black;
-  width: 70px;
-  height: 100px;
-  border-radius: 6px;
-}
-
 .decision {
   display: flex;
   flex-direction: column;
+}
+
+.hp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hpDice {
+  background-image: url('D20_icon.png');
+  background-position: center;
+  background-size: cover;
+  height: 100px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  font-weight: 700;
 }

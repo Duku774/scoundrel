@@ -9,9 +9,17 @@ interface Card {
 interface Weapon {
 	strength: number
 	last: number
+  lastSuit: string
 }
 
 type Deck = Card[];
+
+const symbols = new Map([
+  ["hearts", '♥'],
+  ["diamonds", '♦'],
+  ["clubs", '♣'],
+  ["spades", '♠'],
+])
 
 const createDeck = (): Deck => {
   const deck: Deck = [];
@@ -59,6 +67,7 @@ function App() {
   const [opponent, setOpponent] = useState<Card>()
   const [gameOver, setGameOver] = useState(false)
   const [score, setScore] = useState(-208)
+  const [tutorial, setTutorial] = useState(true)
 
   const handleRestart = () => {  
     setDeck(shuffle(createDeck()))
@@ -108,7 +117,7 @@ function App() {
         setScore(score + (life + heal - 20))
       }
 		} else if(card.suit === 'diamonds') {
-			setWeapon({strength: Number(card.rank), last: 0})
+			setWeapon({strength: Number(card.rank), last: 0, lastSuit: "spades"})
 			removeCardHand(card)
       setSkipped(true)
       if(hand.length === 2) {
@@ -127,7 +136,7 @@ function App() {
     setScore(score + damage)
 
     if (weapon.last > -1) {
-      setWeapon({...weapon, last: damage})
+      setWeapon({...weapon, last: damage, lastSuit: card.suit})
       damage = Math.max(damage - weapon.strength, 0)
     }
 
@@ -209,39 +218,46 @@ function App() {
       <div>
         Remaining Cards: {deck.length}
       </div>
-      <button onClick={() => drawCards(4)}>
-        Draw 4
-      </button>
+      {tutorial && (
+        <button onClick={() => {drawCards(4); setTutorial(false)}}>
+          Draw 4
+        </button>
+      )}
       {hand && (
         <ul>
           {hand.map((card: Card) => (
             <li>
-              <div onClick={() => (handleCard(card))} className='card'>
-								{card.rank} of {card.suit}
+              <div onClick={() => (handleCard(card))} className={`card ${card.suit === "spades" || card.suit === "clubs" ? "black" : "red"}`}>
+								{card.rank} {symbols.get(card.suit)}
 								</div>
             </li>
           ))}
         </ul>
       )}
-			<div>Current life: {life}</div>
-			<div>Current weapon: {weapon ? (
-				<div className='handWeapon'>
-					<div className='weapon'>
-            {weapon.strength}
-          </div>
-          <div className='lastEnemy'>
-            {getNeatEnemy(weapon.last)}
-          </div>
-				</div>) : "none"}
-			</div>
       <button onClick={() => handleSkip()} disabled={skipped}>
         Skip
       </button>
+			<div className='hp'>
+        Current life: 
+        <div className='hpDice'>{life}</div>
+      </div>
+			<div>Current weapon: {weapon ? (
+				<div className='handWeapon'>
+					<div className='card red'>
+            {weapon.strength} {symbols.get("diamonds")}
+          </div>
+          {weapon.last > 0 && (
+            <div className='card black'>
+              {getNeatEnemy(weapon.last)} {symbols.get(weapon.lastSuit)}
+            </div>
+          )}
+				</div>) : "none"}
+			</div>
       {opponent && 
       <div className='decision'>
         <div className='question'>How do you want to fight?</div>
         <div>
-          <button onClick={() => fight(opponent, {strength: 0, last: -1})}>
+          <button onClick={() => fight(opponent, {strength: 0, last: -1, lastSuit: "spades"})}>
             Barehanded
           </button>
           <button onClick={() => fight(opponent, weapon!)} disabled={isDisabled(opponent)}>
