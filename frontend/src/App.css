@@ -5,6 +5,35 @@
   text-align: center;
 }
 
+.cardback {
+  width: 64px;
+  height: 94px;
+  background-color: #14632e;
+  border: 3px solid white;
+  border-radius: 6px;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.15) 0,
+      rgba(255, 255, 255, 0.15) 2px,
+      transparent 2px,
+      transparent 6px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.15) 0,
+      rgba(255, 255, 255, 0.15) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 700;
+  font-size: 2rem;
+}
+
 .card {
   background-color: white;
   color: black;
@@ -58,4 +87,41 @@ ul {
   align-items: center;
   color: black;
   font-weight: 700;
+}
+
+.tutorial {
+  background-color: #242424;
+  height: 50%;
+  width:  50%;
+  border-radius: 6px;
+}
+
+.tutorialOverlay {
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tutorialTitle {
+  font-size: 2rem;
+  background-color: #303030;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.tutorialText {
+  text-align: center;
+  height: 60%;
+  padding: 25px;
+  overflow: auto;
+}
+
+.handWrapper {
+  display: flex;
 }

@@ -215,25 +215,24 @@ function App() {
 
   return (
     <>
-      <div>
-        Remaining Cards: {deck.length}
+      <div className='handWrapper'>
+        <div style={{padding: "1rem"}}>
+          <div className='cardback'>
+            {deck.length}
+          </div>
+        </div>
+        {hand && (
+          <ul>
+            {hand.map((card: Card) => (
+              <li>
+                <div onClick={() => (handleCard(card))} className={`card ${card.suit === "spades" || card.suit === "clubs" ? "black" : "red"}`}>
+                  {card.rank} {symbols.get(card.suit)}
+                  </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-      {tutorial && (
-        <button onClick={() => {drawCards(4); setTutorial(false)}}>
-          Draw 4
-        </button>
-      )}
-      {hand && (
-        <ul>
-          {hand.map((card: Card) => (
-            <li>
-              <div onClick={() => (handleCard(card))} className={`card ${card.suit === "spades" || card.suit === "clubs" ? "black" : "red"}`}>
-								{card.rank} {symbols.get(card.suit)}
-								</div>
-            </li>
-          ))}
-        </ul>
-      )}
       <button onClick={() => handleSkip()} disabled={skipped}>
         Skip
       </button>
@@ -241,17 +240,20 @@ function App() {
         Current life: 
         <div className='hpDice'>{life}</div>
       </div>
-			<div>Current weapon: {weapon ? (
-				<div className='handWeapon'>
-					<div className='card red'>
-            {weapon.strength} {symbols.get("diamonds")}
-          </div>
-          {weapon.last > 0 && (
-            <div className='card black'>
-              {getNeatEnemy(weapon.last)} {symbols.get(weapon.lastSuit)}
+			<div>{weapon ? (
+        <>
+          <div>Current weapon: </div>
+          <div className='handWeapon'>
+            <div className='card red'>
+              {weapon.strength} {symbols.get("diamonds")}
             </div>
-          )}
-				</div>) : "none"}
+            {weapon.last > 0 && (
+              <div className='card black'>
+                {getNeatEnemy(weapon.last)} {symbols.get(weapon.lastSuit)}
+              </div>
+            )}
+          </div>
+        </>) : <></>}
 			</div>
       {opponent && 
       <div className='decision'>
@@ -277,6 +279,21 @@ function App() {
             Try again?
           </button>
         </div>
+      )}
+      {tutorial && (
+        <>
+          <div className='tutorialOverlay'>
+            <div className='tutorial'>
+              <div className='tutorialTitle'>Scoundrel rules</div>
+              <div className='tutorialText'>The rules of the game are simple - you have to go through the whole deck of cards and survive. All cards with ♣ Clubs or ♠ Spades suits are considered monsters who you have to fight, ♦ Diamonds are weapons which help you dealing with enemies lending you their power, but each time you use them their potential gets lower so that they can only be used to fight a card weaker than their most recently defeated opponent. If the room seems to tough to explore, you can skip it but remember - you are then forced to take the next room head on without an option to run. In case you lose life during your journey there are health potions scattered around the dungeon - ♥ Hearts. Your end score is the power of the remaining monsters in the deck or your health at the end of your adventure, having a potion as your final pickup will grant a bonus to your final score.</div>
+              <div style={{padding: "10px", display: "flex", justifyContent: "center", alignItems: "center"}}>
+                <button onClick={() => {drawCards(4); setTutorial(false)}}>
+                  Start your adventure
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </>
   )
