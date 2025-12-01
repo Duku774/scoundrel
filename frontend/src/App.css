@@ -51,6 +51,10 @@
   color: red;
 }
 
+.card.active {
+  outline: 4px solid gold;
+}
+
 ul {
   display: flex;
   gap: 1rem;
@@ -68,6 +72,12 @@ ul {
 .decision {
   display: flex;
   flex-direction: column;
+  border: 3px black solid;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 594px;
+  height: 94px;
 }
 
 .hp {
@@ -96,7 +106,7 @@ ul {
   border-radius: 6px;
 }
 
-.tutorialOverlay {
+.overlay {
   height: 100vh;
   width: 100vw;
   position: absolute;
@@ -124,4 +134,55 @@ ul {
 
 .handWrapper {
   display: flex;
+}
+
+.gameover {
+  background-color: #242424;
+  height: 250px;
+  width: 400px;
+  border-radius: 6px;
+}
+
+.goHeader {
+  background-color: #303030;
+  font-size: 3rem;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.goText {
+  padding: 20px;
+  font-size: 1.5rem;
+}
+
+.weaponHand {
+  height: 170px;
+  width: 600px;
+  margin: auto;
+}
+
+.weaponStatus {
+  background-color: #303030;
+  font-weight: 700;
+  font-size: 1.2rem;
+  height: 30px;
+}
+
+.weaponCards {
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.question {
+  font-weight: 700;
+  background-color: #303030;
+}
+
+.fightButtons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
 }

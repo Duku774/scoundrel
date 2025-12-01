@@ -68,6 +68,7 @@ function App() {
   const [gameOver, setGameOver] = useState(false)
   const [score, setScore] = useState(-208)
   const [tutorial, setTutorial] = useState(true)
+  const [active, setActive] = useState<Card>()
 
   const handleRestart = () => {  
     setDeck(shuffle(createDeck()))
@@ -79,6 +80,8 @@ function App() {
     setOpponent(undefined)
     setGameOver(false)
     setScore(-208)
+    drawCards(4)
+    setActive(undefined)
   }
 
   const drawCards = (count: number) => {
@@ -100,6 +103,7 @@ function App() {
   }
 
 	const handleCard = (card: Card) => {
+    setActive(card)
 		if(card.suit === 'clubs' || card.suit === 'spades') {
       setOpponent(card)
 		} else if(card.suit === 'hearts') {
@@ -215,74 +219,88 @@ function App() {
 
   return (
     <>
-      <div className='handWrapper'>
-        <div style={{padding: "1rem"}}>
-          <div className='cardback'>
-            {deck.length}
+      <div style={{display: "flex"}}>
+        <div className='handWrapper'>
+          <div style={{padding: "1rem"}}>
+            <div className='cardback'>
+              {deck.length}
+            </div>
           </div>
+          {hand && (
+            <ul style={{width: "400px", display: "flex", justifyContent: "center"}}>
+              {hand.map((card: Card) => (
+                <li>
+                  <div 
+                  onClick={() => (handleCard(card))} 
+                  className={`card ${card.suit === "spades" || card.suit === "clubs" ? "black" : "red"} ${active === card && "active"}`}
+                  >
+                    {card.rank} {symbols.get(card.suit)}
+                    </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-        {hand && (
-          <ul>
-            {hand.map((card: Card) => (
-              <li>
-                <div onClick={() => (handleCard(card))} className={`card ${card.suit === "spades" || card.suit === "clubs" ? "black" : "red"}`}>
-                  {card.rank} {symbols.get(card.suit)}
-                  </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className='hp'>
+          Current life: 
+        <div className='hpDice'>{life}</div>
+        </div>
       </div>
-      <button onClick={() => handleSkip()} disabled={skipped}>
+      <button onClick={() => handleSkip()} disabled={skipped} style={{margin: "10px"}}>
         Skip
       </button>
-			<div className='hp'>
-        Current life: 
-        <div className='hpDice'>{life}</div>
-      </div>
-			<div>{weapon ? (
-        <>
-          <div>Current weapon: </div>
-          <div className='handWeapon'>
-            <div className='card red'>
-              {weapon.strength} {symbols.get("diamonds")}
-            </div>
-            {weapon.last > 0 && (
-              <div className='card black'>
-                {getNeatEnemy(weapon.last)} {symbols.get(weapon.lastSuit)}
-              </div>
-            )}
+      {opponent ? ( 
+        <div className='decision'>
+          <div className='question'>How do you want to fight?</div>
+          <div className='fightButtons'>
+            <button onClick={() => fight(opponent, {strength: 0, last: -1, lastSuit: "spades"})}>
+              Barehanded
+            </button>
+            <button onClick={() => fight(opponent, weapon!)} disabled={isDisabled(opponent)}>
+              Weapon
+            </button>
+            <button onClick={() => {setOpponent(undefined); setActive(undefined)}}>
+              Cancel
+            </button>
           </div>
-        </>) : <></>}
-			</div>
-      {opponent && 
-      <div className='decision'>
-        <div className='question'>How do you want to fight?</div>
-        <div>
-          <button onClick={() => fight(opponent, {strength: 0, last: -1, lastSuit: "spades"})}>
-            Barehanded
-          </button>
-          <button onClick={() => fight(opponent, weapon!)} disabled={isDisabled(opponent)}>
-            Weapon
-          </button>
-          <button onClick={() => setOpponent(undefined)}>
-            Cancel
-          </button>
-        </div>
-      </div>
+        </div>) : (<div style={{height: "120px"}}/>)
       }
+			<div className='weaponHand'>
+        {weapon ? (
+        <div style={{border: "3px black solid"}}>
+          <div className='weaponStatus'>Current weapon: </div>
+          <div className='handWeapon'>
+            <div className='weaponCards'>
+              <div className='card red'>
+                {weapon.strength} {symbols.get("diamonds")}
+              </div>
+              {weapon.last > 0 && (
+                <div className='card black'>
+                  {getNeatEnemy(weapon.last)} {symbols.get(weapon.lastSuit)}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>) : <></>}
+			</div>
       {gameOver && (
-        <div>
-          Game Over:
-          Your final score is: {score}
-          <button onClick={handleRestart}>
-            Try again?
-          </button>
+        <div className='overlay'>
+          <div className='gameover'>
+            <div className='goHeader'>
+              Game Over
+            </div>
+            <div className='goText'>
+              Your final score is: {score}
+            </div>
+            <button onClick={handleRestart}>
+              Try again?
+            </button>
+          </div>
         </div>
       )}
       {tutorial && (
         <>
-          <div className='tutorialOverlay'>
+          <div className='overlay'>
             <div className='tutorial'>
               <div className='tutorialTitle'>Scoundrel rules</div>
               <div className='tutorialText'>The rules of the game are simple - you have to go through the whole deck of cards and survive. All cards with ♣ Clubs or ♠ Spades suits are considered monsters who you have to fight, ♦ Diamonds are weapons which help you dealing with enemies lending you their power, but each time you use them their potential gets lower so that they can only be used to fight a card weaker than their most recently defeated opponent. If the room seems to tough to explore, you can skip it but remember - you are then forced to take the next room head on without an option to run. In case you lose life during your journey there are health potions scattered around the dungeon - ♥ Hearts. Your end score is the power of the remaining monsters in the deck or your health at the end of your adventure, having a potion as your final pickup will grant a bonus to your final score.</div>
