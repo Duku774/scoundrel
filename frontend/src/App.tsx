@@ -69,6 +69,8 @@ function App() {
   const [score, setScore] = useState(-208)
   const [tutorial, setTutorial] = useState(true)
   const [active, setActive] = useState<Card>()
+  const [menu, setMenu] = useState(false)
+  const [deckColor, setDeckColor] = useState("green")
 
   const handleRestart = () => {  
     setDeck(shuffle(createDeck()))
@@ -222,7 +224,7 @@ function App() {
       <div style={{display: "flex"}}>
         <div className='handWrapper'>
           <div style={{padding: "1rem"}}>
-            <div className='cardback'>
+            <div className={`cardback ${deckColor}`}>
               {deck.length}
             </div>
           </div>
@@ -309,6 +311,29 @@ function App() {
                   Start your adventure
                 </button>
               </div>
+            </div>
+          </div>
+        </>
+      )}
+      <button className='settingsButton' onClick={() => setMenu(true)}>
+        Settings
+      </button>
+      {menu && (
+        <>
+          <div className='overlay'>
+            <div className='settings'>
+              Settings
+              Deck color:
+              <select value={deckColor} onChange={(e) => setDeckColor(e.target.value)}>
+                <option value={"green"}>Green</option>
+                <option value={"red"}>Red</option>
+                <option value={"blue"}>Blue</option>
+                <option value={"black"}>Black</option>
+                <option value={"yellow"}>Yellow</option>
+              </select>
+              <button onClick={() => setMenu(false)}>
+                Close
+              </button>
             </div>
           </div>
         </>
