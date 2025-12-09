@@ -322,18 +322,24 @@ function App() {
         <>
           <div className='overlay'>
             <div className='settings'>
-              Settings
-              Deck color:
-              <select value={deckColor} onChange={(e) => setDeckColor(e.target.value)}>
-                <option value={"green"}>Green</option>
-                <option value={"red"}>Red</option>
-                <option value={"blue"}>Blue</option>
-                <option value={"black"}>Black</option>
-                <option value={"yellow"}>Yellow</option>
-              </select>
-              <button onClick={() => setMenu(false)}>
-                Close
-              </button>
+              <div className='tutorialTitle'>
+                Settings
+              </div>
+              <div className='settingsContent'>
+                <div style={{padding: "20px", top: "10px"}}>
+                  Deck color:
+                  <select value={deckColor} onChange={(e) => setDeckColor(e.target.value)} style={{margin: "10px"}}>
+                    <option value={"green"}>Green</option>
+                    <option value={"red"}>Red</option>
+                    <option value={"blue"}>Blue</option>
+                    <option value={"black"}>Black</option>
+                    <option value={"yellow"}>Yellow</option>
+                  </select>
+                </div>
+                <button onClick={() => setMenu(false)} className='closeButton'>
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </>
